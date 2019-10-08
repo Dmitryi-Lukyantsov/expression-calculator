@@ -6,7 +6,8 @@ function eval() {
 function expressionCalculator(expr) {
     // write your solution here
     let result = 0;
-    let brackets = 0;
+    let bracOpen = 0;
+    let bracClose = 0;
     let x = [];
     let y = 0;
 
@@ -33,32 +34,42 @@ function expressionCalculator(expr) {
 
     for (let i = 0; i < expr.length; i++) {
         const brac = expr[i];
-        if (brac === '(') brackets++;
-        if (brac === ')') brackets--;
+        if (brac === '(') bracOpen++;
+        if (brac === ')') bracClose++;
 
-        if (brackets !== 0) {
-            throw new Error("ExpressionError: Brackets must be paired")
-        }
+    }
+    
+    if (bracOpen !== bracClose) {
+        throw new Error("ExpressionError: Brackets must be paired")
     }
 
     if (expr.length === 3) {
         result = methods[expr[1]](+expr[0], +expr[2]);
-        if (result === Infinity) {
-            throw new Error ("TypeError: Devision by zero.");
-        };
+        infin(result); // подумать
         return result;
     }
 
     for (let i = 0; i < x.length; ) {
-        if ( x[i+1] === '*' && x[i+2] !== '(' || x[i+1] === '/' && x[i+2] !== '(') { 
-            y = methods[x[i+1]](x[i], x[i+2]);
-            x.splice(i, 3, y );
+
+        if (x[i] === '(' && x[i+2] === ')') {
+            x.splice(i, 3, x[i+1] );
             i = 0;
+        } else if ( x[i+1] === '*' && x[i+2] !== '(' && x[i] !== ')' ||
+                    x[i+1] === '/' && x[i+2] !== '(' && x[i] !== '(') { 
+
+                    y = methods[x[i+1]](x[i], x[i+2]);
+                    x.splice(i, 3, y );
+                    i = 0;
         } else {i++}
     }
 
     for (let i = 0; i < x.length; ) {
-        if ( x[i+1] === '+' && x[i+2] !== '(' || x[i+1] === '-' && x[i+2] !== '(') { 
+        if (x[i] === '(' && x[i+2] === ')') {
+        x.splice(i, 3, x[i+1] );
+        i = 0;
+        } else if ( x[i+1] === '+' && x[i+2] !== '(' && x[i] !== ')' ||
+             x[i+1] === '-' && x[i+2] !== '(' && x[i] !== '(') { 
+            
             y = methods[x[i+1]](+x[i], +x[i+2]);
             x.splice(i, 3, y );
             i = 0;
@@ -73,9 +84,15 @@ function expressionCalculator(expr) {
         }
     }
 
-    // console.log(expStr)
-    // console.log(x)
+    
+console.log(expStr)
+    console.log(x)
 }
+
+
+expressionCalculator(" 59 - 13 + (  25 * 22 / (  47 / 38 * (  64 / 93 - 91 + 72  ) * 66  ) + 43 - 5  ) * 39 / 55 ")
+expressionCalculator(" 20 - 57 * 12 - (  58 + 84 * 32 / 27  ) ")
+
 
 module.exports = {
     expressionCalculator
