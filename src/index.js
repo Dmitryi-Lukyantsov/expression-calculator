@@ -47,6 +47,7 @@ function expressionCalculator(expr) {
     
     const funsBrac = (arr) => {
         let number = 0;
+
         for (let i = 0; i < arr.length; ) {
 
             if (arr[i] === '*' || arr[i] === '/') {
@@ -64,6 +65,7 @@ function expressionCalculator(expr) {
                 i = 0;
             }  else {i++}
         }
+
         return number;
     }
 
@@ -72,7 +74,7 @@ function expressionCalculator(expr) {
     let res;
     for (let i = 0; i < x.length; ) {
         
-        if (x[i] === '(') {
+        if (x[i] === '(' && x[i+1] !== '(') {
             posOpen = i;
             arrBrac = [];
             count = 0;
@@ -88,17 +90,26 @@ function expressionCalculator(expr) {
             count = 0;
             arrBrac = [];
             i = 0;
-        } else {i++}
+        } else if (x.indexOf('(') === -1) {
+            i++;
+            break
+        } else { i++ }
     }
-    
-    res = funsBrac(arrBrac)
+
+    console.log(x.join(''))
+    res = funsBrac(x)
+    //res = funsBrac(arrBrac)
     infin(res)
+    console.log(res)
+    console.log(arrBrac)
+    //console.log(x)
     return res
 }
 
 
-expressionCalculator(" 59 - 13 + (  25 * 22 / (  47 / 38 * (  64 / 93 - 91 + 72  ) * 66  ) + 43 - 5  ) * 39 / 55 ")
-expressionCalculator(" (  96 / 83 - 53 - (  59 - 91 / 91 - 54  )  ) / (  75 + 4 / (  50 - 80 * 45 + 93 + 18  ) - 76 / 54  ) * 14 + 59  ")
+expressionCalculator(" 31 * 21 + 14 / (  (  18 * 52 / (  43 - 74 / 89 - 12  ) + 8  ) + 3 / 0 + (  9 + 81 + 19 * 94 / (  0 * 71 + 53 - 20 * 94  )  )  ) ")
+
+
 
 
 module.exports = {
