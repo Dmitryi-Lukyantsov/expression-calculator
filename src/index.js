@@ -8,16 +8,13 @@ function expressionCalculator(expr) {
     let result = 0;
     let bracOpen = 0;
     let bracClose = 0;
+    let arrBrac = [];
     let x = [];
-    let y = 0;
 
     let expArr = expr.split(' ');
     expArr.forEach(el => {
         if (el !== '') x.push(el);
     });
-
-    let expStr = x.join('');
-    
     
     const methods = {
         '*': (a, b) => a * b,
@@ -28,7 +25,7 @@ function expressionCalculator(expr) {
 
     const infin = result => {
         if (result === Infinity) {
-            throw new Error ('TypeError: Devision by zero.');
+            throw new Error ('TypeError: Division by zero.');
         }
     }
 
@@ -36,7 +33,6 @@ function expressionCalculator(expr) {
         const brac = expr[i];
         if (brac === '(') bracOpen++;
         if (brac === ')') bracClose++;
-
     }
     
     if (bracOpen !== bracClose) {
@@ -45,66 +41,59 @@ function expressionCalculator(expr) {
 
     if (expr.length === 3) {
         result = methods[expr[1]](+expr[0], +expr[2]);
-        infin(result); // подумать
+        infin(result); 
         return result;
     }
-
-    const repeatOnePriority = (x) => {
-        for (let i = 0; i < x.length; ) {
-
-            if ( x[i+1] === '*' && x[i+2] !== '(' && x[i] !== ')' && x[i-1] !== '*' && x[i-1] !== '/' ||
-                x[i+1] === '/' && x[i+2] !== '(' && x[i] !== '(' && x[i-1] !== '*' && x[i-1] !== '/' ) { 
-
-                y = methods[x[i+1]](x[i], x[i+2]);
-                x.splice(i, 3, y );
-                i = 0;
-            } else if (x[i] === '(' && x[i+2] === ')') {
-                x.splice(i, 3, x[i+1] );
-                i = 0;
-            } else {i++}
-        }
-    }
-
-    const repeatTwoPriority = (x) => {
-        for (let i = 0; i < x.length; ) {
-
-            if ( x[i+1] === '+' && x[i+2] !== '(' && x[i] !== ')' && x[i-1] !== '*' && x[i-1] !== '/' && x[i-1] !== '+' && x[i-1] !== '-'|| 
-                 x[i+1] === '-' && x[i+2] !== '(' && x[i] !== '(' && x[i-1] !== '*' && x[i-1] !== '/' && x[i-1] !== '+' && x[i-1] !== '-' ) { 
-                
-                y = methods[x[i+1]](+x[i], +x[i+2]);
-                x.splice(i, 3, y );
-                i = 0;
-            } else if (x[i] === '(' && x[i+2] === ')') {
-                x.splice(i, 3, x[i+1] );
-                i = 0;
-            } else {i++}
-        }
-    }
-
-    // repeatOnePriority(x);
-    // repeatTwoPriority(x)
-    // repeatOnePriority(x);
-    // repeatTwoPriority(x)
-    // repeatOnePriority(x);
-    // repeatTwoPriority(x)
     
+    const funsBrac = (arr) => {
+        let number = 0;
+        for (let i = 0; i < arr.length; ) {
 
-    for (let i = 0; i < x.length; i++) {
-        repeatOnePriority(x);
-        repeatTwoPriority(x);
+            if (arr[i] === '*' || arr[i] === '/') {
+                number = methods[arr[i]](arr[i-1], arr[i+1]);
+                arr.splice(i-1, 3, number);
+                i = 0;
+            }  else {i++}
+        }
 
-        // if (x.length > 2) {i=0}
-        if (x.length === 1) {
-            result = x[0];
-            console.log(result)
-            return result;
-        } else { i++ }
+        for (let i = 0; i < arr.length; ) {
+
+            if (arr[i] === '+' || arr[i] === '-') {
+                number = methods[arr[i]](+arr[i-1], +arr[i+1]);
+                arr.splice(i-1, 3, number);
+                i = 0;
+            }  else {i++}
+        }
+        return number;
     }
 
-    let q = x.join('')
-    console.log(expStr)
-    console.log(q)
-    console.log(x)
+    let posOpen;
+    let count = 0;
+    let res;
+    for (let i = 0; i < x.length; ) {
+        
+        if (x[i] === '(') {
+            posOpen = i;
+            arrBrac = [];
+            count = 0;
+            i++;
+        }
+
+        arrBrac.push(x[i]);
+        count++ 
+
+        if (x[i+1] === ')') {
+            res = funsBrac(arrBrac);
+            x.splice(posOpen, count+2, res)
+            count = 0;
+            arrBrac = [];
+            i = 0;
+        } else {i++}
+    }
+    
+    res = funsBrac(arrBrac)
+    infin(res)
+    return res
 }
 
 
