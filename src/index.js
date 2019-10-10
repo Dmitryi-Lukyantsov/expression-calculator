@@ -29,6 +29,12 @@ function expressionCalculator(expr) {
         }
     }
 
+    for (let i = 0; i < x.length; i++) {
+        if (x[i] === '/' && x[i+1] === "0") {
+            throw new Error ('TypeError: Division by zero.');
+        }  
+    }
+
     for (let i = 0; i < expr.length; i++) {
         const brac = expr[i];
         if (brac === '(') bracOpen++;
@@ -49,11 +55,11 @@ function expressionCalculator(expr) {
         let number = 0;
 
         for (let i = 0; i < arr.length; ) {
-
-            if (arr[i] === '*' || arr[i] === '/') {
+            if (arr[i] === '*' || arr[i] === '/') { 
                 number = methods[arr[i]](arr[i-1], arr[i+1]);
                 arr.splice(i-1, 3, number);
                 i = 0;
+                
             }  else {i++}
         }
 
@@ -96,20 +102,11 @@ function expressionCalculator(expr) {
         } else { i++ }
     }
 
-    console.log(x.join(''))
+
     res = funsBrac(x)
-    //res = funsBrac(arrBrac)
-    infin(res)
-    console.log(res)
-    console.log(arrBrac)
-    //console.log(x)
+    
     return res
 }
-
-
-expressionCalculator(" 31 * 21 + 14 / (  (  18 * 52 / (  43 - 74 / 89 - 12  ) + 8  ) + 3 / 0 + (  9 + 81 + 19 * 94 / (  0 * 71 + 53 - 20 * 94  )  )  ) ")
-
-
 
 
 module.exports = {
